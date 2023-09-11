@@ -1,31 +1,41 @@
+// Função para calcular a variância
 const formulaVariancia = (rangeCounts, media, totalFi) => {
+  // Calcula a soma do quadrado das diferenças entre os valores (xi) e a média, ponderada pela frequência (fi)
   const somaXiMenosMediaQuadrado = rangeCounts.reduce((sum, range) => {
     const xi = range.xi;
     const xiMenosMedia = xi - media;
     return sum + xiMenosMedia * xiMenosMedia * range.fi;
   }, 0);
 
+  // Calcula a variância dividindo a soma pela diferença entre o total de frequências e 1 (para amostras)
   return somaXiMenosMediaQuadrado / (totalFi - 1);
 };
 
+// Função para calcular o desvio médio
 const formulaDesvioMedio = (rangeCounts, media, totalFi) => {
+  // Calcula a soma das diferenças absolutas entre os valores (xi) e a média, ponderada pela frequência (fi)
   const somaXiMenosMediaAbs = rangeCounts.reduce((sum, range) => {
     const xi = range.xi;
     const xiMenosMedia = xi - media;
     return sum + Math.abs(xiMenosMedia) * range.fi;
   }, 0);
 
+  // Calcula o desvio médio dividindo a soma pelo total de frequências
   return somaXiMenosMediaAbs / totalFi;
 };
 
+// Função para calcular o desvio padrão a partir da variância
 const formulaDesvioPadrao = (variancia) => {
   return Math.sqrt(variancia);
 };
 
+// Função para calcular o coeficiente de variação
 const formulaCoeficienteVariacao = (desvioPadrao, media) => {
+  // Calcula o coeficiente de variação como a razão entre o desvio padrão e a média, multiplicado por 100 para expressar em porcentagem
   return (desvioPadrao / media) * 100;
 };
 
+// Função para criar as classes com base nos dados
 const montandoClasse = (primeiroNumero, ultimoNumero, h) => {
   const classes = [];
   for (let inicio = primeiroNumero; inicio <= ultimoNumero; inicio += h) {
@@ -34,25 +44,30 @@ const montandoClasse = (primeiroNumero, ultimoNumero, h) => {
   return classes;
 };
 
+// Função para calcular a frequência (fi) de uma classe
 const formulaFi = (dados, range) => {
   return dados.filter((numero) => numero >= range.inicio && numero < range.fim)
     .length;
 };
 
+// Função para calcular o ponto médio (xi) de uma classe
 const formulaXi = (range) => {
   return (range.inicio + range.fim) / 2;
 };
 
+// Função para calcular a frequência acumulada (fac) até uma classe
 const formulaFac = (dados, arr, index) => {
   return arr
     .slice(0, index + 1)
     .reduce((sum, item) => sum + formulaFi(dados, item), 0);
 };
 
+// Função para calcular a média
 const formulaMedia = (somaXiFi, totalFi) => {
   return somaXiFi / totalFi;
 };
 
+// Função para calcular a moda
 const formulaModa = (rangeCounts, h) => {
   // Encontra a classe modal inicialmente como a primeira classe (caso de empate).
   const classeModal = rangeCounts.reduce(
@@ -92,6 +107,7 @@ const formulaModa = (rangeCounts, h) => {
   return moda;
 };
 
+// Função para calcular a mediana
 const formulaMediana = (totalFi, rangeCounts) => {
   // Calcula o índice do meio, que é metade do total de frequências acumuladas.
   const indiceMedio = totalFi / 2;
@@ -131,37 +147,49 @@ const formulaMediana = (totalFi, rangeCounts) => {
   const mediana =
     limiteInferiorClasse +
     (posicaoMediana / frequenciaMediana) * amplitudeClasseMediana;
+
   // Retorna o valor da mediana.
   return mediana;
 };
 
+// Função principal para analisar o array de dados
 export const analyzeArray = (arr) => {
-  //ordena a lista de dados em ordem crescente
+  // Ordena a lista de dados em ordem crescente
   const dadosOrdenados = [...arr].sort((a, b) => a - b);
 
-  //conta a frequência de cada número
+  // Conta a frequência de cada número
   const frequência = dadosOrdenados.reduce((acc, num) => {
     acc[num] = (acc[num] || 0) + 1;
     return acc;
   }, {});
 
+  // Calcula a soma das frequências para obter o total de frequências
   const somaFrequência =
     Object.values(frequência).reduce((soma, contador) => soma + contador, 0) ||
     arr.length;
 
+  // Obtém o primeiro e o último número dos dados
   const primeiroNumero = dadosOrdenados[0];
   const ultimoNumero = dadosOrdenados[dadosOrdenados.length - 1];
+
+  // Calcula a amplitude total dos dados
   const amplitudeTotal = ultimoNumero - primeiroNumero;
+
+  // Conta o número de elementos nos dados
   const elementos = dadosOrdenados.length;
 
+  // Calcula o número de classes usando diferentes métodos (k1, k2, k3)
   const k1 = Math.ceil(Math.sqrt(somaFrequência));
   const k2 = Math.ceil(1 + 3.22 * Math.log10(somaFrequência));
   const k3 = Math.ceil(-1 + 2 * Math.log(somaFrequência));
 
+  // Calcula a amplitude das classes (h) dividindo a amplitude total pelo número de classes
   const h = Math.ceil(amplitudeTotal / k1);
 
+  // Cria as classes com base nos limites inferior e superior
   const classes = montandoClasse(primeiroNumero, ultimoNumero, h);
 
+  // Calcula as estatísticas de cada classe
   const rangeCounts = classes.map((range, index, arr) => {
     const fi = formulaFi(dadosOrdenados, range);
     const xi = formulaXi(range);
@@ -178,29 +206,30 @@ export const analyzeArray = (arr) => {
     };
   });
 
-  //média
+  // Calcula a média
   const totalFi = rangeCounts.reduce((total, row) => total + row.fi, 0);
   const somaXiFi = rangeCounts.reduce((sum, row) => sum + row.xi * row.fi, 0);
   const media = formulaMedia(somaXiFi, totalFi);
 
-  // mediana
+  // Calcula a mediana
   const mediana = formulaMediana(totalFi, rangeCounts);
 
-  //moda
+  // Calcula a moda
   const moda = formulaModa(rangeCounts, h);
 
-  // Variância
+  // Calcula a variância
   const variancia = formulaVariancia(rangeCounts, media, totalFi);
 
-  // Desvio Médio
+  // Calcula o desvio médio
   const desvioMedio = formulaDesvioMedio(rangeCounts, media, totalFi);
 
-  // Desvio Padrão
+  // Calcula o desvio padrão
   const desvioPadrao = formulaDesvioPadrao(variancia);
 
-  // Coeficiente de Variação
+  // Calcula o coeficiente de variação
   const coeficienteVariacao = formulaCoeficienteVariacao(desvioPadrao, media);
 
+  // Calcula o índice de assimetria
   const medidasDeAssimetria = (media - moda) / desvioPadrao;
 
   return {
@@ -225,63 +254,3 @@ export const analyzeArray = (arr) => {
     medidasDeAssimetria,
   };
 };
-
-// const data = [
-//   51, 51, 65, 52, 58, 58, 61, 58, 65, 65, 65, 56, 67.5, 67.5, 58, 67.5, 50, 57,
-//   50, 50, 81, 81, 81, 81, 110, 110, 110, 78, 54, 54, 54, 54, 65, 84, 71, 65, 65,
-//   65, 65, 66,
-// ];
-
-// const data = [
-//   10.5, 11.2, 12.8, 13.5, 14.2, 14.5, 15.7, 16.1, 17.4, 18.2, 19.8, 20.3, 21.6,
-//   22.3, 23.5, 24.1, 25.6, 26.7, 27.9, 28.4, 14.2, 14.5, 15.7, 16.1, 17.4, 18.2,
-//   19.8, 20.3, 21.6, 22.3, 23.5, 24.1,
-// ];
-
-// const data = [
-//   5, 7, 8, 8, 8, 9, 9, 10, 10, 10, 10, 11, 11, 12, 12, 12, 13, 14, 15, 20,
-// ];
-
-// const data = [15, 25, 20];
-
-// const data = [
-//   5.3, 8.2, 13.8, 74.1, 85.3, 88.0, 90.2, 91.5, 92.4, 92.9, 93.6, 94.3, 94.8,
-//   94.9, 95.5, 95.8, 95.9, 96.6, 96.7, 98.1, 99.0, 101.4, 103.7, 106.0, 113.5,
-// ];
-
-// const analysis = analyzeArray(data);
-
-// console.log("AMPLITUDE TOTAL: ");
-// console.log("valor mínimo: ", analysis.primeiroNumero);
-// console.log("valor máximo: ", analysis.ultimoNumero);
-// console.log("amplitude Total: ", analysis.amplitudeTotal);
-// console.log("elementos (K): ", analysis.elementos);
-// console.log("------------------------------------------");
-// console.log("1º passo: ");
-// console.log("k1: ", analysis.k1);
-// console.log("k2: ", analysis.k2);
-// console.log("k3: ", analysis.k3);
-// console.log("------------------------------------------");
-
-// console.log("2º passo: ");
-// console.log("amplitude (h): ", analysis.h);
-
-// console.table(analysis.rangeCounts, [
-//   "classe",
-//   "fi",
-//   "xi",
-//   "fac",
-//   "xifi",
-//   "xi2fi",
-// ]);
-
-// console.log("Total de fi:", analysis.totalFi);
-
-// console.log("Média: ", analysis.media);
-// console.log("Moda: ", analysis.moda);
-// console.log("mediana: ", analysis.mediana);
-
-// console.log("variancia", analysis.variancia);
-// console.log("desvioMedio", analysis.desvioMedio);
-// console.log("desvioPadrao", analysis.desvioPadrao);
-// console.log("coeficienteVariacao", analysis.coeficienteVariacao, "%");
