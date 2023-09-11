@@ -1,7 +1,7 @@
 // Função para calcular a variância
-const formulaVariancia = (rangeCounts, media, totalFi) => {
+const formulaVariancia = (tabelaDeClasses, media, totalFi) => {
   // Calcula a soma do quadrado das diferenças entre os valores (xi) e a média, ponderada pela frequência (fi)
-  const somaXiMenosMediaQuadrado = rangeCounts.reduce((sum, range) => {
+  const somaXiMenosMediaQuadrado = tabelaDeClasses.reduce((sum, range) => {
     const xi = range.xi;
     const xiMenosMedia = xi - media;
     return sum + xiMenosMedia * xiMenosMedia * range.fi;
@@ -12,9 +12,9 @@ const formulaVariancia = (rangeCounts, media, totalFi) => {
 };
 
 // Função para calcular o desvio médio
-const formulaDesvioMedio = (rangeCounts, media, totalFi) => {
+const formulaDesvioMedio = (tabelaDeClasses, media, totalFi) => {
   // Calcula a soma das diferenças absolutas entre os valores (xi) e a média, ponderada pela frequência (fi)
-  const somaXiMenosMediaAbs = rangeCounts.reduce((sum, range) => {
+  const somaXiMenosMediaAbs = tabelaDeClasses.reduce((sum, range) => {
     const xi = range.xi;
     const xiMenosMedia = xi - media;
     return sum + Math.abs(xiMenosMedia) * range.fi;
@@ -68,9 +68,9 @@ const formulaMedia = (somaXiFi, totalFi) => {
 };
 
 // Função para calcular a moda
-const formulaModa = (rangeCounts, h) => {
+const formulaModa = (tabelaDeClasses, h) => {
   // Encontra a classe modal inicialmente como a primeira classe (caso de empate).
-  const classeModal = rangeCounts.reduce(
+  const classeModal = tabelaDeClasses.reduce(
     (classeModal, classeAtual) => {
       return classeAtual.fi > classeModal.fi ? classeAtual : classeModal;
     },
@@ -85,12 +85,16 @@ const formulaModa = (rangeCounts, h) => {
   const limiteInferiorClasseModal = limitesClasseModal[0];
 
   // Encontra a classe anterior à classe modal (caso exista).
-  const classeAnterior = rangeCounts[rangeCounts.indexOf(classeModal) - 1] || {
+  const classeAnterior = tabelaDeClasses[
+    tabelaDeClasses.indexOf(classeModal) - 1
+  ] || {
     fi: 0,
   };
 
   // Encontra a classe seguinte à classe modal (caso exista).
-  const classeSeguinte = rangeCounts[rangeCounts.indexOf(classeModal) + 1] || {
+  const classeSeguinte = tabelaDeClasses[
+    tabelaDeClasses.indexOf(classeModal) + 1
+  ] || {
     fi: 0,
   };
 
@@ -108,7 +112,7 @@ const formulaModa = (rangeCounts, h) => {
 };
 
 // Função para calcular a mediana
-const formulaMediana = (totalFi, rangeCounts) => {
+const formulaMediana = (totalFi, tabelaDeClasses) => {
   // Calcula o índice do meio, que é metade do total de frequências acumuladas.
   const indiceMedio = totalFi / 2;
 
@@ -119,7 +123,7 @@ const formulaMediana = (totalFi, rangeCounts) => {
   let frequenciaAcumulada;
 
   // Procura pela classe que contém a mediana.
-  const classeMediana = rangeCounts.find((classe) => {
+  const classeMediana = tabelaDeClasses.find((classe) => {
     if (classe.fac >= indiceMedio) {
       frequenciaAcumulada = classe.fac;
     }
@@ -190,7 +194,7 @@ export const analyzeArray = (arr) => {
   const classes = montandoClasse(primeiroNumero, ultimoNumero, h);
 
   // Calcula as estatísticas de cada classe
-  const rangeCounts = classes.map((range, index, arr) => {
+  const tabelaDeClasses = classes.map((range, index, arr) => {
     const fi = formulaFi(dadosOrdenados, range);
     const xi = formulaXi(range);
     const fac = formulaFac(dadosOrdenados, arr, index);
@@ -207,21 +211,24 @@ export const analyzeArray = (arr) => {
   });
 
   // Calcula a média
-  const totalFi = rangeCounts.reduce((total, row) => total + row.fi, 0);
-  const somaXiFi = rangeCounts.reduce((sum, row) => sum + row.xi * row.fi, 0);
+  const totalFi = tabelaDeClasses.reduce((total, row) => total + row.fi, 0);
+  const somaXiFi = tabelaDeClasses.reduce(
+    (sum, row) => sum + row.xi * row.fi,
+    0
+  );
   const media = formulaMedia(somaXiFi, totalFi);
 
   // Calcula a mediana
-  const mediana = formulaMediana(totalFi, rangeCounts);
+  const mediana = formulaMediana(totalFi, tabelaDeClasses);
 
   // Calcula a moda
-  const moda = formulaModa(rangeCounts, h);
+  const moda = formulaModa(tabelaDeClasses, h);
 
   // Calcula a variância
-  const variancia = formulaVariancia(rangeCounts, media, totalFi);
+  const variancia = formulaVariancia(tabelaDeClasses, media, totalFi);
 
   // Calcula o desvio médio
-  const desvioMedio = formulaDesvioMedio(rangeCounts, media, totalFi);
+  const desvioMedio = formulaDesvioMedio(tabelaDeClasses, media, totalFi);
 
   // Calcula o desvio padrão
   const desvioPadrao = formulaDesvioPadrao(variancia);
@@ -242,7 +249,7 @@ export const analyzeArray = (arr) => {
     k2,
     k3,
     h,
-    rangeCounts,
+    tabelaDeClasses,
     totalFi,
     media,
     mediana,
