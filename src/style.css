@@ -5,6 +5,12 @@
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+.group-tables {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+}
+
 .rtable {
   display: inline-block;
   vertical-align: top;

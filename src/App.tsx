@@ -1,16 +1,26 @@
-import { Bar, Line, Scatter } from "react-chartjs-2";
-
+import { Scatter } from "react-chartjs-2";
 import { analyzeArray } from "./utils";
 import { data } from "./data";
 import { Chart, registerables } from "chart.js";
 import "./style.css";
 Chart.register(...registerables);
 
+//exemplo de dados com AS negativo
+// const data = [
+//   20, 25, 25, 25, 25, 25, 21, 24, 24, 24, 24, 25, 25, 25, 15, 27, 26, 26, 30,
+// ];
+
+//exemplo de dados com AS = 0
+// const data = [
+//   20, 25, 25, 25, 25, 25, 21, 24, 24, 24, 24, 25, 25, 25, 15, 27, 26, 26, 30,
+//   33, 33, 15,
+// ];
+
 const dados = analyzeArray(data);
 
 console.log(dados);
 
-const findMFromClasses = () => {};
+// const findMFromClasses = () => {};
 
 function App() {
   return (
@@ -29,136 +39,107 @@ function App() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Chrome</td>
-            <td>9,562</td>
-            <td>68.81%</td>
-            <td>7,895</td>
-            <td>01:07</td>
-          </tr>
-          <tr>
-            <td>Firefox</td>
-            <td>2,403</td>
-            <td>17.29%</td>
-            <td>2,046</td>
-            <td>00:59</td>
-          </tr>
-          <tr>
-            <td>Safari</td>
-            <td>1,089</td>
-            <td>2.63%</td>
-            <td>904</td>
-            <td>00:59</td>
-          </tr>
-          <tr>
-            <td>Internet Explorer</td>
-            <td>366</td>
-            <td>2.63%</td>
-            <td>333</td>
-            <td>01:01</td>
-          </tr>
-          <tr>
-            <td>Safari (in-app)</td>
-            <td>162</td>
-            <td>1.17%</td>
-            <td>112</td>
-            <td>00:58</td>
-          </tr>
-          <tr>
-            <td>Opera</td>
-            <td>103</td>
-            <td>0.74%</td>
-            <td>87</td>
-            <td>01:22</td>
-          </tr>
-          <tr>
-            <td>Edge</td>
-            <td>98</td>
-            <td>0.71%</td>
-            <td>69</td>
-            <td>01:18</td>
-          </tr>
-          <tr>
-            <td>Other</td>
-            <td>275</td>
-            <td>6.02%</td>
-            <td>90</td>
-            <td>N/A</td>
-          </tr>
+          {dados.tabelaDeClasses.map((item, index) => (
+            <tr key={index}>
+              {Object.values(item).map((valor, subIndex) => (
+                <td key={subIndex}>{valor}</td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       </table>
+      <div className="group-tables">
+        <div>
+          <h2>Amplitude total</h2>
+          <table className="rtable rtable--flip">
+            <thead>
+              <tr>
+                <th>Valor mínimo</th>
+                <th>Valor máximo</th>
+                <th>Amplitude total</th>
+                <th>elementos (K)</th>
+              </tr>
+            </thead>
 
-      <h2>Flipped axis and overflow:</h2>
+            <tbody>
+              <tr>
+                <td>{dados.primeiroNumero}</td>
+                <td>{dados.ultimoNumero}</td>
+                <td>{dados.amplitudeTotal}</td>
+                <td>{dados.elementos}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      <table className="rtable rtable--flip">
-        <thead>
-          <tr>
-            <th>Browser</th>
-            <th>Sessions</th>
-            <th>Percentage</th>
-            <th>New Users</th>
-            <th>Avg. Duration</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Chrome</td>
-            <td>9,562</td>
-            <td>68.81%</td>
-            <td>7,895</td>
-            <td>01:07</td>
-          </tr>
-          <tr>
-            <td>Firefox</td>
-            <td>2,403</td>
-            <td>17.29%</td>
-            <td>2,046</td>
-            <td>00:59</td>
-          </tr>
-          <tr>
-            <td>Safari</td>
-            <td>1,089</td>
-            <td>2.63%</td>
-            <td>904</td>
-            <td>00:59</td>
-          </tr>
-          <tr>
-            <td>Internet Explorer</td>
-            <td>366</td>
-            <td>2.63%</td>
-            <td>333</td>
-            <td>01:01</td>
-          </tr>
-          <tr>
-            <td>Safari (in-app)</td>
-            <td>162</td>
-            <td>1.17%</td>
-            <td>112</td>
-            <td>00:58</td>
-          </tr>
-          <tr>
-            <td>Opera</td>
-            <td>103</td>
-            <td>0.74%</td>
-            <td>87</td>
-            <td>01:22</td>
-          </tr>
-          <tr>
-            <td>Edge</td>
-            <td>98</td>
-            <td>0.71%</td>
-            <td>69</td>
-            <td>01:18</td>
-          </tr>
-          <tr>
-            <td>Other</td>
-            <td>275</td>
-            <td>6.02%</td>
-            <td>90</td>
-            <td>N/A</td>
-          </tr>
-        </tbody>
-      </table>
+        <div>
+          <h2>1º e 2º passo</h2>
+          <table className="rtable rtable--flip">
+            <thead>
+              <tr>
+                <th>K</th>
+                <th>Amplitude (h)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{dados.k2}</td>
+                <td>{dados.h}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h2>Medidas de posição</h2>
+          <table className="rtable rtable--flip">
+            <thead>
+              <tr>
+                <th>Média</th>
+                <th>Mediana</th>
+                <th>moda</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{dados.media}</td>
+                <td>{dados.mediana}</td>
+                <td>{dados.moda}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h2>Medidas de dispersão</h2>
+          <table className="rtable rtable--flip">
+            <thead>
+              <tr>
+                <th>Variância</th>
+                <th>Desvio médio</th>
+                <th>Desvio Padrão</th>
+                <th>Coef. de variação</th>
+                <th>(AS) Medida de assim...</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{dados.variancia}</td>
+                <td>{dados.desvioMedio}</td>
+                <td>{dados.desvioPadrao}</td>
+                <td>{dados.coeficienteVariacao}</td>
+                <td>{dados.medidasDeAssimetria}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <p>* Se AS = 0, a o gráfico seria simétrico </p>
+      <br />
+      <p>* Se AS {" > "} 0, Assimétrica positivo </p>
+      <br />
+      <p>* Se AS {" < "} 0, Assimétrica negativo </p>
       <div style={{ width: "80vw" }}>
         <Scatter
           data={{
@@ -180,14 +161,14 @@ function App() {
               //   borderWidth: 1,
               //   backgroundColor: "rgba(123, 145, 0, 0.2)",
               // },
-              // {
-              //   type: "line",
-              //   tension: 0.1,
-              //   label: "",
-              //   data: dados.tabelaDeClasses.map(({ fi }) => fi),
-              //   fill: false,
-              //   borderColor: "rgb(54, 162, 235)",
-              // },
+              {
+                type: "line",
+                tension: 0.1,
+                label: "Gráfico com linha",
+                data: dados.tabelaDeClasses.map(({ fi }) => fi),
+                fill: false,
+                borderColor: "rgb(54, 162, 235)",
+              },
             ],
           }}
           options={{
