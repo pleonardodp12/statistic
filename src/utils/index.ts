@@ -1,5 +1,10 @@
+import { TTabelaDeClasses } from "../App";
 // Função para calcular a variância
-const formulaVariancia = (tabelaDeClasses, media, totalFi) => {
+const formulaVariancia = (
+  tabelaDeClasses: TTabelaDeClasses,
+  media: number,
+  totalFi: number
+) => {
   // Calcula a soma do quadrado das diferenças entre os valores (xi) e a média, ponderada pela frequência (fi)
   const somaXiMenosMediaQuadrado = tabelaDeClasses.reduce((sum, range) => {
     const xi = range.xi;
@@ -12,7 +17,11 @@ const formulaVariancia = (tabelaDeClasses, media, totalFi) => {
 };
 
 // Função para calcular o desvio médio
-const formulaDesvioMedio = (tabelaDeClasses, media, totalFi) => {
+const formulaDesvioMedio = (
+  tabelaDeClasses: TTabelaDeClasses,
+  media: number,
+  totalFi: number
+) => {
   // Calcula a soma das diferenças absolutas entre os valores (xi) e a média, ponderada pela frequência (fi)
   const somaXiMenosMediaAbs = tabelaDeClasses.reduce((sum, range) => {
     const xi = range.xi;
@@ -25,18 +34,22 @@ const formulaDesvioMedio = (tabelaDeClasses, media, totalFi) => {
 };
 
 // Função para calcular o desvio padrão a partir da variância
-const formulaDesvioPadrao = (variancia) => {
+const formulaDesvioPadrao = (variancia: number) => {
   return Math.sqrt(variancia);
 };
 
 // Função para calcular o coeficiente de variação
-const formulaCoeficienteVariacao = (desvioPadrao, media) => {
+const formulaCoeficienteVariacao = (desvioPadrao: number, media: number) => {
   // Calcula o coeficiente de variação como a razão entre o desvio padrão e a média, multiplicado por 100 para expressar em porcentagem
   return (desvioPadrao / media) * 100;
 };
 
 // Função para criar as classes com base nos dados
-const montandoClasse = (primeiroNumero, ultimoNumero, h) => {
+const montandoClasse = (
+  primeiroNumero: number,
+  ultimoNumero: number,
+  h: number
+) => {
   const classes = [];
   for (let inicio = primeiroNumero; inicio <= ultimoNumero; inicio += h) {
     classes.push({ inicio, fim: inicio + h });
@@ -45,30 +58,35 @@ const montandoClasse = (primeiroNumero, ultimoNumero, h) => {
 };
 
 // Função para calcular a frequência (fi) de uma classe
-const formulaFi = (dados, range) => {
+const formulaFi = (dados: number[], range: { inicio: number; fim: number }) => {
   return dados.filter((numero) => numero >= range.inicio && numero < range.fim)
     .length;
 };
 
 // Função para calcular o ponto médio (xi) de uma classe
-const formulaXi = (range) => {
+const formulaXi = (range: { inicio: number; fim: number }) => {
   return (range.inicio + range.fim) / 2;
 };
 
 // Função para calcular a frequência acumulada (fac) até uma classe
-const formulaFac = (dados, arr, index) => {
+const formulaFac = (
+  dados: number[],
+  arr: { inicio: number; fim: number }[],
+  index: number
+) => {
+  console.log(dados, arr, index);
   return arr
     .slice(0, index + 1)
     .reduce((sum, item) => sum + formulaFi(dados, item), 0);
 };
 
 // Função para calcular a média
-const formulaMedia = (somaXiFi, totalFi) => {
+const formulaMedia = (somaXiFi: number, totalFi: number) => {
   return somaXiFi / totalFi;
 };
 
 // Função para calcular a moda
-const formulaModa = (tabelaDeClasses, h) => {
+const formulaModa = (tabelaDeClasses: TTabelaDeClasses, h: number) => {
   // Encontra a classe modal inicialmente como a primeira classe (caso de empate).
   const classeModal = tabelaDeClasses.reduce(
     (classeModal, classeAtual) => {
@@ -81,11 +99,13 @@ const formulaModa = (tabelaDeClasses, h) => {
   const frequenciaModal = classeModal.fi;
 
   // Divide o nome da classe modal em limite inferior e superior e converte-os em números.
+  // @ts-expect-error
   const limitesClasseModal = classeModal.classe.split("-").map(Number);
   const limiteInferiorClasseModal = limitesClasseModal[0];
 
   // Encontra a classe anterior à classe modal (caso exista).
   const classeAnterior = tabelaDeClasses[
+    // @ts-expect-error
     tabelaDeClasses.indexOf(classeModal) - 1
   ] || {
     fi: 0,
@@ -93,6 +113,7 @@ const formulaModa = (tabelaDeClasses, h) => {
 
   // Encontra a classe seguinte à classe modal (caso exista).
   const classeSeguinte = tabelaDeClasses[
+    // @ts-expect-error
     tabelaDeClasses.indexOf(classeModal) + 1
   ] || {
     fi: 0,
@@ -112,15 +133,15 @@ const formulaModa = (tabelaDeClasses, h) => {
 };
 
 // Função para calcular a mediana
-const formulaMediana = (totalFi, tabelaDeClasses) => {
+const formulaMediana = (totalFi: number, tabelaDeClasses: TTabelaDeClasses) => {
   // Calcula o índice do meio, que é metade do total de frequências acumuladas.
   const indiceMedio = totalFi / 2;
 
   // Inicializa variáveis para guardar informações sobre a mediana.
-  let limiteInferiorClasse;
-  let frequenciaMediana;
-  let amplitudeClasseMediana;
-  let frequenciaAcumulada;
+  let limiteInferiorClasse: number;
+  let frequenciaMediana: number;
+  let amplitudeClasseMediana: number;
+  let frequenciaAcumulada: number;
 
   // Procura pela classe que contém a mediana.
   const classeMediana = tabelaDeClasses.find((classe) => {
@@ -144,12 +165,16 @@ const formulaMediana = (totalFi, tabelaDeClasses) => {
   }
 
   // Calcula a posição da mediana dentro da classe.
+
   const posicaoMediana =
+    // @ts-expect-error
     indiceMedio - (frequenciaAcumulada - frequenciaMediana);
 
   // Calcula o valor da mediana usando a posição relativa dentro da classe.
   const mediana =
+    // @ts-expect-error
     limiteInferiorClasse +
+    // @ts-expect-error
     (posicaoMediana / frequenciaMediana) * amplitudeClasseMediana;
 
   // Retorna o valor da mediana.
@@ -157,7 +182,7 @@ const formulaMediana = (totalFi, tabelaDeClasses) => {
 };
 
 // Função principal para analisar a lista de dados
-export const analisarDados = (arr) => {
+export const analisarDados = (arr: number[]) => {
   // Ordena a lista de dados em ordem crescente
   const dadosOrdenados = [...arr].sort((a, b) => a - b);
 
@@ -165,7 +190,7 @@ export const analisarDados = (arr) => {
   const frequência = dadosOrdenados.reduce((acc, num) => {
     acc[num] = (acc[num] || 0) + 1;
     return acc;
-  }, {});
+  }, [] as number[]);
 
   // Calcula a soma das frequências para obter o total de frequências
   const somaFrequência =

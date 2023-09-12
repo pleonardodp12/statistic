@@ -19,7 +19,16 @@ Chartjs.register(...registerables, annotationPlugin);
 //   33, 33, 15,31,
 // ];
 
-type Dados = {
+export type TTabelaDeClasses = {
+  classe: string;
+  fi: number;
+  xi: number;
+  fac: number;
+  xifi: number;
+  xi2fi: number;
+}[];
+
+export type TDados = {
   dadosOrdenados: number[];
   primeiroNumero: number;
   ultimoNumero: number;
@@ -29,14 +38,7 @@ type Dados = {
   k2: number;
   k3: number;
   h: number;
-  tabelaDeClasses: {
-    classe: string;
-    fi: number;
-    xi: number;
-    fac: number;
-    xifi: number;
-    xi2fi: number;
-  }[];
+  tabelaDeClasses: TTabelaDeClasses;
   mediana: number;
   media: number;
   moda: number;
@@ -47,7 +49,7 @@ type Dados = {
   medidasDeAssimetria: number;
 };
 
-const findM = (dados: Dados, m = 0) => {
+const findM = (dados: TDados, m = 0) => {
   const classeEncontrada = dados.tabelaDeClasses.find((dado) => {
     const [min, max] = dado.classe.split(" - ").map(Number);
     return m >= min && m <= max;
@@ -71,7 +73,7 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const [numbers, setNumbers] = useState<number[]>([]);
   const [isCalculated, setIsCalculated] = useState(false);
-  const [dados, setDados] = useState({} as Dados);
+  const [dados, setDados] = useState({} as TDados);
 
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = event.target.value;
