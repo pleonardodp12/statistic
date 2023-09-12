@@ -8,7 +8,7 @@ Chartjs.register(...registerables);
 
 // exemplo de dados com AS negativo
 // const data = [
-//   20, 25, 25, 25, 25, 25, 21, 24, 24, 24, 24, 25, 25, 25, 15, 27, 26, 26, 30,
+//   14, 13, 18, 20, 25, 25, 25, 25, 25, 21, 24, 25, 25, 25, 27, 26, 26, 30, 31,
 // ];
 
 //exemplo de dados com AS = 0
@@ -19,7 +19,7 @@ Chartjs.register(...registerables);
 
 const dados = analisarDados(data);
 
-// console.log(dados);
+console.log(dados);
 
 const findM = (m = 0) => {
   const classeEncontrada = dados.tabelaDeClasses.find((dado) => {
@@ -182,7 +182,7 @@ function App() {
                     {
                       x: findM(dados.media)?.classe,
                       y: findM(dados.media)?.fi,
-                      r: 6,
+                      r: 8,
                     },
                   ],
                   backgroundColor: "rgb(255, 99, 132)",
@@ -195,23 +195,23 @@ function App() {
                     {
                       x: findM(dados.moda)?.classe,
                       y: findM(dados.moda)?.fi,
-                      r: 6,
+                      r: 8,
                     },
                   ],
-                  backgroundColor: "rgb(255, 99, 132)",
+                  backgroundColor: "rgb(201, 203, 207)",
                 },
                 {
                   hidden: !showDispersionMeasures,
                   type: "bubble",
-                  label: "Média",
+                  label: "Mediana",
                   data: [
                     {
                       x: findM(dados.mediana)?.classe,
                       y: findM(dados.mediana)?.fi,
-                      r: 6,
+                      r: 8,
                     },
                   ],
-                  backgroundColor: "rgb(255, 99, 132)",
+                  backgroundColor: "rgb(153, 102, 255)",
                 },
                 {
                   hidden: !showLine,
@@ -227,6 +227,25 @@ function App() {
             options={{
               responsive: true,
               maintainAspectRatio: true,
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    title: function (context) {
+                      const bubbleTitle =
+                        context?.[0]?.dataset?.type === "bubble";
+                      if (bubbleTitle) {
+                        if (context?.[0]?.dataset.label === "Média")
+                          return `Média: ${dados.media}`;
+                        if (context?.[0]?.dataset.label === "Mediana")
+                          return `Mediana: ${dados.mediana}`;
+                        if (context?.[0]?.dataset.label === "Moda")
+                          return `Moda: ${dados.moda}`;
+                      }
+                      return;
+                    },
+                  },
+                },
+              },
               scales: {
                 x: {
                   title: {
