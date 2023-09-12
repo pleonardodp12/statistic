@@ -234,3 +234,57 @@ code {
 .toggle > input:disabled ~ label:after {
   background-color: rgba(255, 255, 255, 0.3);
 }
+
+.wrapper-initial-page {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+textarea {
+  height: auto;
+  max-width: 600px;
+  color: #999;
+  font-weight: 400;
+  font-size: 20px;
+  width: 100%;
+  background: #fff;
+  border-radius: 3px;
+  resize: vertical;
+  border: none;
+  outline: none;
+  box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+
+  transition: height 0.5s ease;
+}
+
+.button {
+  background-color: #1d97bf;
+  width: 240px;
+  height: auto;
+  padding: 16px;
+  outline: none;
+  box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 8px;
+  color: #f7f7f7;
+  cursor: pointer;
+  transition: filter 0.5s ease;
+}
+
+.button:hover {
+  filter: opacity(0.8);
+}
+
+.wrapper-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
