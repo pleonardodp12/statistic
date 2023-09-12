@@ -77,7 +77,7 @@ function App() {
 
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = event.target.value;
-    const sanitizedInput = inputValue.replace(/[^0-9,]/g, "");
+    const sanitizedInput = inputValue.replace(/[^0-9,.]/g, "");
     setInputValue(sanitizedInput);
     const numberArray = inputValue
       .split(",")
