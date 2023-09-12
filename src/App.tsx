@@ -1,11 +1,12 @@
-import { Scatter } from "react-chartjs-2";
-import { analyzeArray } from "./utils";
+import { useState } from "react";
+import { analisarDados } from "./utils";
 import { data } from "./data";
-import { Chart, registerables } from "chart.js";
+import { Chart as Chartjs, registerables } from "chart.js";
+import { Chart } from "react-chartjs-2";
 import "./style.css";
-Chart.register(...registerables);
+Chartjs.register(...registerables);
 
-//exemplo de dados com AS negativo
+// exemplo de dados com AS negativo
 // const data = [
 //   20, 25, 25, 25, 25, 25, 21, 24, 24, 24, 24, 25, 25, 25, 15, 27, 26, 26, 30,
 // ];
@@ -16,13 +17,25 @@ Chart.register(...registerables);
 //   33, 33, 15,
 // ];
 
-const dados = analyzeArray(data);
+const dados = analisarDados(data);
 
-console.log(dados);
+// console.log(dados);
 
-// const findMFromClasses = () => {};
+const findM = (m = 0) => {
+  const classeEncontrada = dados.tabelaDeClasses.find((dado) => {
+    const [min, max] = dado.classe.split(" - ").map(Number);
+    return m >= min && m <= max;
+  });
+
+  return classeEncontrada;
+};
 
 function App() {
+  const [showLine, setShowLine] = useState<boolean>(false);
+  const [showBar, setShowBar] = useState<boolean>(true);
+  const [showDispersionMeasures, setShowDispersionMeasures] =
+    useState<boolean>(false);
+
   return (
     <>
       <h2>Tabela de classes</h2>
@@ -140,51 +153,119 @@ function App() {
       <p>* Se AS {" > "} 0, Assimétrica positivo </p>
       <br />
       <p>* Se AS {" < "} 0, Assimétrica negativo </p>
-      <div style={{ width: "80vw" }}>
-        <Scatter
-          data={{
-            labels: dados.tabelaDeClasses.map(({ classe }) => classe),
-            datasets: [
-              {
-                type: "bar",
-                label: "Dados em barra por frequência",
-                data: dados.tabelaDeClasses.map(({ fi }) => fi),
-                borderColor: "rgb(255, 99, 132)",
-                borderWidth: 1,
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
-              },
-              // {
-              //   type: "line",
-              //   label: "Bar Dataset",
-              //   data: [dados.media, dados.moda, dados.mediana],
-              //   borderColor: "rgb(176, 219, 21)",
-              //   borderWidth: 1,
-              //   backgroundColor: "rgba(123, 145, 0, 0.2)",
-              // },
-              {
-                type: "line",
-                tension: 0.1,
-                label: "Gráfico com linha",
-                data: dados.tabelaDeClasses.map(({ fi }) => fi),
-                fill: false,
-                borderColor: "rgb(54, 162, 235)",
-              },
-            ],
-          }}
-          options={{
-            responsive: true,
-            scales: {
-              y: {
-                title: {
-                  display: true,
-                  text: "Frequência (fi)",
+      <div className="graphic-content">
+        <div className="graphic">
+          <Chart
+            type="bar"
+            style={{ width: "70%" }}
+            data={{
+              labels: dados.tabelaDeClasses.map(({ classe }) => classe),
+              datasets: [
+                {
+                  hidden: !showBar,
+                  type: "bar",
+                  label: "Dados em barra por frequência",
+                  data: dados.tabelaDeClasses,
+                  parsing: {
+                    xAxisKey: "classe",
+                    yAxisKey: "fi",
+                  },
+                  borderColor: "rgb(255, 159, 64)",
+                  borderWidth: 1,
+                  backgroundColor: "rgba(255, 159, 64, 0.3)",
                 },
-                min: 0,
-                beginAtZero: true,
+                {
+                  hidden: !showDispersionMeasures,
+                  type: "bubble",
+                  label: "Média",
+                  data: [
+                    {
+                      x: findM(dados.media)?.classe,
+                      y: findM(dados.media)?.fi,
+                      r: 6,
+                    },
+                  ],
+                  backgroundColor: "rgb(255, 99, 132)",
+                },
+                {
+                  hidden: !showDispersionMeasures,
+                  type: "bubble",
+                  label: "Moda",
+                  data: [
+                    {
+                      x: findM(dados.moda)?.classe,
+                      y: findM(dados.moda)?.fi,
+                      r: 6,
+                    },
+                  ],
+                  backgroundColor: "rgb(255, 99, 132)",
+                },
+                {
+                  hidden: !showDispersionMeasures,
+                  type: "bubble",
+                  label: "Média",
+                  data: [
+                    {
+                      x: findM(dados.mediana)?.classe,
+                      y: findM(dados.mediana)?.fi,
+                      r: 6,
+                    },
+                  ],
+                  backgroundColor: "rgb(255, 99, 132)",
+                },
+                {
+                  hidden: !showLine,
+                  type: "line",
+                  tension: 0.1,
+                  label: "Gráfico com linha",
+                  data: dados.tabelaDeClasses.map(({ fi }) => fi),
+                  fill: false,
+                  borderColor: "rgb(54, 162, 235)",
+                },
+              ],
+            }}
+            options={{
+              responsive: true,
+              maintainAspectRatio: true,
+              scales: {
+                x: {
+                  title: {
+                    display: true,
+                    text: "Classe",
+                  },
+                  beginAtZero: true,
+                },
+                y: {
+                  title: {
+                    display: true,
+                    text: "Frequência (fi)",
+                  },
+                  beginAtZero: true,
+                },
               },
-            },
-          }}
-        />
+            }}
+          />
+        </div>
+
+        <div className="wrapper-toggles">
+          <div className="toggle">
+            <span>Gráfico linha</span>
+            <input type="checkbox" checked={showLine} readOnly />
+            <label onClick={() => setShowLine(!showLine)}></label>
+          </div>
+          <div className="toggle">
+            <span>Gráfico barras</span>
+            <input type="checkbox" checked={showBar} readOnly />
+            <label onClick={() => setShowBar(!showBar)}></label>
+          </div>
+          <div className="toggle">
+            <span>Medidas de dispersão</span>
+            <input type="checkbox" checked={showDispersionMeasures} readOnly />
+            <label
+              onClick={() => setShowDispersionMeasures(!showDispersionMeasures)}
+            ></label>
+          </div>
+        </div>
       </div>
     </>
   );

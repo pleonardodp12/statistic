@@ -156,8 +156,8 @@ const formulaMediana = (totalFi, tabelaDeClasses) => {
   return mediana;
 };
 
-// Função principal para analisar o array de dados
-export const analyzeArray = (arr) => {
+// Função principal para analisar a lista de dados
+export const analisarDados = (arr) => {
   // Ordena a lista de dados em ordem crescente
   const dadosOrdenados = [...arr].sort((a, b) => a - b);
 
