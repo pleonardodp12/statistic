@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { ChangeEvent, useState } from "react";
 import { analisarDados } from "./utils";
 import { data } from "./data";
