@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import { analisarDados } from "./utils";
+// @ts-expect-error
 import { data } from "./data";
 import { Chart as Chartjs, registerables } from "chart.js";
 import { Chart } from "react-chartjs-2";
@@ -94,6 +95,7 @@ function App() {
   const handleBackButton = () => {
     setNumbers([]);
     setInputValue("");
+    // @ts-expect-error
     setDados({});
     setIsCalculated(false);
   };
@@ -256,6 +258,7 @@ function App() {
                       label: "Média",
                       data: [
                         {
+                          // @ts-expect-error
                           x: findM(dados, dados.media)?.classe,
                           y: findM(dados, dados.media)?.fi,
                           r: 8,
@@ -269,6 +272,7 @@ function App() {
                       label: "Moda",
                       data: [
                         {
+                          // @ts-expect-error
                           x: findM(dados, dados.moda)?.classe,
                           y: findM(dados, dados.moda)?.fi,
                           r: 8,
@@ -282,6 +286,7 @@ function App() {
                       label: "Mediana",
                       data: [
                         {
+                          // @ts-expect-error
                           x: findM(dados, dados.mediana)?.classe,
                           y: findM(dados, dados.mediana)?.fi,
                           r: 8,
@@ -294,6 +299,7 @@ function App() {
                       type: "line",
                       tension: 0.1,
                       label: "Gráfico com linha",
+                      // @ts-expect-error
                       data: dados.tabelaDeClasses.map(({ fi }) => fi),
                       fill: false,
                       borderColor: "rgb(54, 162, 235)",
